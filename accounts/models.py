@@ -1,18 +1,18 @@
 from django.conf import settings
 from django.db import models
 from django.db.models.signals import post_save
-
 from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser
 )
-
 from django.core.validators import RegexValidator
 
-USERNAME_REGEX = '^[a-zA-Z0-9.@+-]*$'
+from .utils import code_generator
+
+USERNAME_REGEX = '^[a-zA-Z0-9.+-]*$'
 
 """
-    If you wan to customize your user model do it in the beginning before making the
-    initial imgrations, like did in extended
+    If you want to customize your user model do it in the beginning before making the
+    initial makemigrations
 
     Below is how we extend abstract base user
 
@@ -115,7 +115,23 @@ class MyUser(AbstractBaseUser):
     #     return self.is_admin
 
 
+class ActivationProfile(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    key = models.CharField(max_length=120)
+    expired = models.BooleanField(default=False)
 
+    def save(self, *args, **kwargs):
+        self.key = code_generator()
+        super(ActivationProfile, self).save(*args, **kwargs)
+
+def post_save_activation_receiver(sender, instance, created, *args, **kwargs):
+    if created:
+        #send_email
+        print("activation created")
+        # url = "http<>/activate" + instance.key
+
+# Hook the signal
+post_save.connect(post_save_activation_receiver, sender=ActivationProfile)
 
 """
     Associate a signal here so whenever a user is created a profile is associated with it
@@ -141,6 +157,7 @@ def post_save_user_model_receiver(sender, instance, created, *args, **kwargs):
     if created:
         try:
             Profile.objects.create(user=instance)
+            ActivationProfile.create(user=instance)
         except:
             pass
 
