@@ -12,6 +12,7 @@ Unleashing Django-User-Model. A sample project which covers how to:
 * Expire the activation-key once used
 
 Tip: Always create a virtual environment
+
 Clone the repo, install the requirements file and run:
 
 * pip install -r requirements.txt
