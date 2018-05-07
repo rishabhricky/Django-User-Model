@@ -11,11 +11,13 @@ Unleashing Django-User-Model. A sample project which covers how to:
 * Using signals to create profile and activation keys when a user registers
 * Expire the activation-key once used
 
-Clone the repo and install the requirements file and run:
+Clone the repo, install the requirements file and run:
+(Tip: Always create a virtual environment)
 
+* pip install -r requirements.txt
 * python manage.py migrate
 * python manage.py runserver
 
-Hit the URL's given in urls.py file
+Hit the URL's given in urls.py
 
 Code is well commented to get an understanging 
